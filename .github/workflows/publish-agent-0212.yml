@@ -11,7 +11,7 @@ jobs:
     timeout-minutes: 20
     env:
       GH_TOKEN: ${{ github.token }}
-      ARTIFACT_URL: 'https://sdmntprbrazilsouth.oaiusercontent.com/files/00000000-8e28-820e-9766-14c6e7df0002/raw?se=2026-11-03T00%3A42%3A08Z&sp=r&sv=2026-02-06&sr=b&scid=0ee541e0-8018-4f03-8633-d6bf17446a8c&skoid=33096a49-a96b-4506-9fc4-04a7517f8175&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2026-11-03T00%3A35%3A58Z&ske=2026-11-04T00%3A35%3A58Z&sks=b&skv=2026-02-06&sig=iZWUcVLbtZnm/BVHDOd5oScOqIttxe2%2BVT6mekZLpgU%3D'
+      ARTIFACT_URL: 'https://sdmntprbrazilsouth.oaiusercontent.com/files/00000000-4090-820e-87c6-d854b15bb088/raw?se=2026-11-03T00%3A45%3A09Z&sp=r&sv=2026-02-06&sr=b&scid=ac7b5a8a-7d3e-4985-a46a-f4875273e021&skoid=33096a49-a96b-4506-9fc4-04a7517f8175&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2026-11-03T00%3A32%3A07Z&ske=2026-11-04T00%3A32%3A07Z&sks=b&skv=2026-02-06&sig=Kme8UKG0JlR%2BZ/0jADcRsG%2BY7ifIYTeyz5OOhSv6Ddk%3D'
     steps:
       - name: Baixar pacote validado
         run: |
@@ -29,4 +29,4 @@ jobs:
           grep -Fq '"commit": "2162f97571a739c01ce1d2749b01221a04bf81c8"' inner/release.json
       - name: Publicar instaladores do piloto
         run: |
-          gh release create v0.21.2 inner/NetworkMachineAgent.msi inner/NetworkMachineAgentSetup.exe --title "Network Machine Agent v0.21.2 - piloto" --notes "Corrige a leitura Unicode do usuário da sessão Windows. Disponível somente para homologação nas máquinas piloto." --prerelease
+          gh release create v0.21.2 inner/NetworkMachineAgent.msi inner/NetworkMachineAgentSetup.exe --repo "$GITHUB_REPOSITORY" --target main --latest=false --title "Network Machine Agent v0.21.2 - piloto" --notes "Corrige a leitura Unicode do usuário da sessão Windows. Disponível somente para homologação nas máquinas piloto." --prerelease
