@@ -1,0 +1,32 @@
+name: Publicar piloto 0.21.2
+on:
+  push:
+    paths:
+      - .github/workflows/publish-agent-0212.yml
+permissions:
+  contents: write
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      GH_TOKEN: ${{ github.token }}
+      ARTIFACT_URL: 'https://sdmntprbrazilsouth.oaiusercontent.com/files/00000000-8e28-820e-9766-14c6e7df0002/raw?se=2026-11-03T00%3A42%3A08Z&sp=r&sv=2026-02-06&sr=b&scid=0ee541e0-8018-4f03-8633-d6bf17446a8c&skoid=33096a49-a96b-4506-9fc4-04a7517f8175&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2026-11-03T00%3A35%3A58Z&ske=2026-11-04T00%3A35%3A58Z&sks=b&skv=2026-02-06&sig=iZWUcVLbtZnm/BVHDOd5oScOqIttxe2%2BVT6mekZLpgU%3D'
+    steps:
+      - name: Baixar pacote validado
+        run: |
+          curl --fail --location --retry 3 --silent --show-error --output artifact.zip "$ARTIFACT_URL"
+          mkdir outer inner
+          unzip -q artifact.zip -d outer
+          unzip -q outer/NetworkMachineAgent-0.21.2-pilot.zip -d inner
+      - name: Conferir integridade e versão
+        run: |
+          test "$(stat -c%s inner/NetworkMachineAgent.msi)" = "60444672"
+          test "$(stat -c%s inner/NetworkMachineAgentSetup.exe)" = "132218440"
+          echo "082bc297d7011b209f9e8d09943ebdabbf9ad32f6a9c5254d42588c362775d8e  inner/NetworkMachineAgent.msi" | sha256sum -c -
+          echo "4a3bcdea65bb5abf351bb99237049f3861b95398cac603ca0ba2ca3e2a5b4fe9  inner/NetworkMachineAgentSetup.exe" | sha256sum -c -
+          grep -Fq '"version": "0.21.2"' inner/release.json
+          grep -Fq '"commit": "2162f97571a739c01ce1d2749b01221a04bf81c8"' inner/release.json
+      - name: Publicar instaladores do piloto
+        run: |
+          gh release create v0.21.2 inner/NetworkMachineAgent.msi inner/NetworkMachineAgentSetup.exe --title "Network Machine Agent v0.21.2 - piloto" --notes "Corrige a leitura Unicode do usuário da sessão Windows. Disponível somente para homologação nas máquinas piloto." --prerelease
